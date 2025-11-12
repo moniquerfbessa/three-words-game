@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Word Guess Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-b from-blue-200 to-blue-500 min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md text-center">
+        <h1 class="text-3xl font-bold mb-6 text-blue-700">🎯 Three Word Guess Game</h1>
+        <p class="text-lg mb-4">Guess the secret words! You have 5 attempts.</p>
+
+        <input id="guessInput" type="text" placeholder="Type three words..."
+            class="border-2 border-blue-400 rounded-lg p-2 w-full mb-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-600">
+
+        <button id="submitGuess"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
+            Guess
+        </button>
+
+        <div id="feedback" class="mt-6 text-lg font-semibold"></div>
+        <div id="attempts" class="mt-2 text-sm text-gray-600"></div>
+
+        <button id="restart" class="hidden mt-6 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition duration-200">
+            Play Again 🔁
+        </button>
+    </div>
+
+    <script>
+        const secretWords = ["sun", "moon", "star"];
+        let attemptsLeft = 5;
+
+        const guessInput = document.getElementById("guessInput");
+        const feedback = document.getElementById("feedback");
+        const attempts = document.getElementById("attempts");
+        const restartBtn = document.getElementById("restart");
+        const submitBtn = document.getElementById("submitGuess");
+
+        attempts.textContent = `Attempts left: ${attemptsLeft}`;
+
+        submitBtn.addEventListener("click", () => {
+            const guess = guessInput.value.toLowerCase().trim().split(" ");
+            if (guess.length !== 3) {
+                feedback.textContent = "❗ Please enter exactly three words.";
+                feedback.className = "text-red-600 mt-6 font-semibold";
+                return;
+            }
+
+            let correct = 0;
+            for (let i = 0; i < 3; i++) {
+                if (guess[i] === secretWords[i]) correct++;
+            }
+
+            if (correct === 3) {
+                feedback.textContent = "🎉 You guessed all words correctly!";
+                feedback.className = "text-green-600 mt-6 font-bold";
+                endGame(true);
+            } else {
+                attemptsLeft--;
+                if (attemptsLeft > 0) {
+                    feedback.textContent = `✅ ${correct} word(s) correct. Try again!`;
+                    feedback.className = "text-blue-700 mt-6 font-semibold";
+                    attempts.textContent = `Attempts left: ${attemptsLeft}`;
+                } else {
+                    feedback.textContent = `💥 Game Over! The words were: ${secretWords.join(", ")}.`;
+                    feedback.className = "text-red-600 mt-6 font-bold";
+                    endGame(false);
+                }
+            }
+            guessInput.value = "";
+        });
+
+        restartBtn.addEventListener("click", () => location.reload());
+
+        function endGame(won) {
+            guessInput.disabled = true;
+            submitBtn.disabled = true;
+            restartBtn.classList.remove("hidden");
+        }
+    </script>
+
+</body>
+</html>
